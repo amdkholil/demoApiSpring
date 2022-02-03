@@ -1,5 +1,6 @@
 package com.domain.services;
 
+import java.util.List;
 import java.util.Optional;
 
 import javax.transaction.Transactional;
@@ -24,5 +25,13 @@ public class ProductService {
 
   public Optional<Product> getId(Long id){
     return productRepo.findById(id);
+  }
+
+  public void dropId(Long id){
+    productRepo.deleteById(id);
+  }
+
+  public List<Product> findByName(String name){
+    return productRepo.findByNameContains(name);
   }
 }
