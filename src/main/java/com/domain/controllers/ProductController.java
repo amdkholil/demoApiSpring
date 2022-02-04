@@ -3,10 +3,14 @@ package com.domain.controllers;
 import java.io.Serializable;
 import java.util.Optional;
 
+import javax.validation.Valid;
+
 import com.domain.models.entities.Product;
 import com.domain.services.ProductService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.Errors;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -33,7 +37,13 @@ public class ProductController implements Serializable {
   }
 
   @PostMapping
-  public Product save(@RequestBody Product product) {
+  public Product save(@Valid @RequestBody Product product, Errors errors ) {
+    if(errors.hasErrors()){
+      for(ObjectError error : errors.getAllErrors()){
+        System.err.println(error.getDefaultMessage());
+      }
+      throw new RuntimeException("Validation error");
+    }
     return productService.add(product);
   }
 
