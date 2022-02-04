@@ -1,43 +1,50 @@
 package com.domain.controllers;
 
 import java.io.Serializable;
+import java.util.Optional;
 
 import com.domain.models.entities.Product;
-import com.domain.models.repos.ProductRepo;
+import com.domain.services.ProductService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-
 
 @RestController
 @RequestMapping(path = "/product")
-public class ProductController implements Serializable{
+public class ProductController implements Serializable {
   @Autowired
-  private ProductRepo productRepo;
+  private ProductService productService;
 
   @GetMapping
-  public @ResponseBody Iterable<Product> index(){
-    return productRepo.findAll();
+  public Iterable<Product> index() {
+    return productService.getAll();
   }
 
-  @PostMapping("/add")
-  public @ResponseBody String add(
-    @RequestParam String name, 
-    @RequestParam String desc,
-    @RequestParam double price
-    ){
+  @GetMapping(path = "/{id}")
+  public Optional<Product> getId(@PathVariable("id") Long id) {
+    return productService.getId(id);
+  }
 
-      Product product = new Product();
-      product.setName(name);
-      product.setDesc(desc);
-      product.setPrice(price);
-      productRepo.save(product);
-    return "saved";
+  @PostMapping
+  public Product save(@RequestBody Product product) {
+    return productService.add(product);
+  }
+
+  @PutMapping
+  public Product update(@RequestBody Product product) {
+    return productService.add(product);
+  }
+
+  @DeleteMapping(path = "/{id}")
+  public void dropId(@PathVariable Long id) {
+    productService.dropId(id);
   }
 
 }
