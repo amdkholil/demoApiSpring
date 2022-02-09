@@ -1,12 +1,12 @@
 package com.domain.controllers;
 
 import java.io.Serializable;
-import java.util.Optional;
 
 import javax.validation.Valid;
 
 import com.domain.dto.ResponseData;
 import com.domain.models.entities.Product;
+import com.domain.models.entities.Supplier;
 import com.domain.services.ProductService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +35,7 @@ public class ProductController implements Serializable {
   }
 
   @GetMapping(path = "/{id}")
-  public Optional<Product> getId(@PathVariable("id") Long id) {
+  public Product getId(@PathVariable("id") Long id) {
     return productService.getId(id);
   }
 
@@ -63,6 +63,11 @@ public class ProductController implements Serializable {
   @DeleteMapping(path = "/{id}")
   public void dropId(@PathVariable Long id) {
     productService.dropId(id);
+  }
+
+  @PostMapping(path = "{id}")
+  public void addSupplier(@RequestBody Supplier supplier, @PathVariable("id") Long productId) {
+    productService.addSupplier(supplier, productId);
   }
 
 }

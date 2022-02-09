@@ -6,6 +6,7 @@ import java.util.Optional;
 import javax.transaction.Transactional;
 
 import com.domain.models.entities.Product;
+import com.domain.models.entities.Supplier;
 import com.domain.models.repos.ProductRepo;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,8 +26,12 @@ public class ProductService {
     return productRepo.findAll();
   }
 
-  public Optional<Product> getId(Long id){
-    return productRepo.findById(id);
+  public Product getId(Long id){
+    Optional<Product> product = productRepo.findById(id);
+    if(!product.isPresent()){
+      return null;
+    }
+    return product.get();
   }
 
   public void dropId(Long id){
@@ -36,4 +41,15 @@ public class ProductService {
   public List<Product> findByName(String name){
     return productRepo.findByNameContains(name);
   }
+
+  public void addSupplier(Supplier supplier, Long productId){
+    Product product = getId(productId);
+    if(product==null){
+      throw new RuntimeException("Product with ID: "+productId+" not found");
+    }
+    product.getSuppliers().add(supplier);
+    add(product);
+  }
+  
+  /* end Class */
 }

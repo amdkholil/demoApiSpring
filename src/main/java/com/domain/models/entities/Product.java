@@ -14,34 +14,35 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotEmpty;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+
 @Entity
-@Table(name="product")
-public class Product implements Serializable{
+@Table(name = "product")
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+public class Product implements Serializable {
 
   @Id
-  @GeneratedValue(strategy=GenerationType.IDENTITY)
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   private long id;
 
-  @NotEmpty(message="Name is required")
+  @NotEmpty(message = "Name is required")
   private String name;
-  
-  @NotEmpty(message="Desc is required")
+
+  @NotEmpty(message = "Desc is required")
   private String desc;
-  
+
   private double price;
-  
+
   @ManyToOne
   private Category category;
 
   @ManyToMany()
-  @JoinTable(
-      name = "product_supplier",
-      joinColumns = @JoinColumn(name="product_id"),
-      inverseJoinColumns = @JoinColumn(name="supplier_id")
-  )
+  @JoinTable(name = "product_supplier", joinColumns = @JoinColumn(name = "product_id"), inverseJoinColumns = @JoinColumn(name = "supplier_id"))
+  // @JsonManagedReference
   private Set<Supplier> suppliers;
-  
-  public Product(){
+
+  public Product() {
 
   }
 
