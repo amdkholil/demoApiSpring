@@ -5,10 +5,13 @@ import java.util.Optional;
 
 import javax.validation.Valid;
 
+import com.domain.dto.ResponseData;
 import com.domain.models.entities.Product;
 import com.domain.services.ProductService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -37,14 +40,19 @@ public class ProductController implements Serializable {
   }
 
   @PostMapping
-  public Product save(@Valid @RequestBody Product product, Errors errors ) {
-    if(errors.hasErrors()){
-      for(ObjectError error : errors.getAllErrors()){
-        System.err.println(error.getDefaultMessage());
+  public ResponseEntity<ResponseData<Product>> save(@Valid @RequestBody Product product, Errors errors) {
+    ResponseData<Product> responseData = new ResponseData<>();
+    if (errors.hasErrors()) {
+      for (ObjectError error : errors.getAllErrors()) {
+        responseData.getMessages().add(error.getDefaultMessage());
       }
-      throw new RuntimeException("Validation error");
+      responseData.setStatus(false);
+      responseData.setPayload(null);
+      return ResponseEntity.status(HttpStatus.BAD_GATEWAY).body(responseData);
     }
-    return productService.add(product);
+    responseData.setStatus(true);
+    responseData.setPayload(productService.add(product));
+    return ResponseEntity.ok(responseData);
   }
 
   @PutMapping
